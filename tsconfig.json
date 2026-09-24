@@ -16,7 +16,7 @@
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
-      {"*": ["./*"]} //"@/*": ["./*"] Use ["./src/*"] if your components folder is inside src/
+      "@/*": ["./*"] // Use ["./src/*"] if your components folder is inside src/
     }
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
