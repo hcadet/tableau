@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, tableau-viz} from 'react';
+import React, { useEffect, useState} from 'react';
 //import * as React from 'react';
 
 // Declare custom HTML element for TypeScript
