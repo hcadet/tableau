@@ -1,17 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const message = String(body?.message ?? "").trim();
+export async function POST(req: Request) {
+  try {
+    const { message } = await req.json();
 
-  if (!message) {
-    return NextResponse.json({ answer: "Please enter a question." }, { status: 400 });
+    // Connected backend API integration spot
+    const apiKey = process.env.AI_API_KEY;
+
+    return NextResponse.json({
+      reply: `Insights for "${message}": Sales in Eastern region showed strong quarter-over-quarter growth. Connect your backend API key in Vercel settings to receive live model generation.`,
+    });
+  } catch {
+    return NextResponse.json({ error: 'Failed to process chat request' }, { status: 500 });
   }
-            https://udify.app/agent/7JSqhqXMVwiIE4oP
-  return NextResponse.json({
-    answer:
-      `Demo response: I received “${message}”. ` +
-      `Connect your existing AI backend here so the assistant can analyze the Tableau data ` +
-      `and issue Tableau Embedding API commands such as filters or selections.`,
-  });
 }

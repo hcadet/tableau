@@ -1,21 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-const TABLEAU_SRC =
-  "https://public.tableau.com/views/SalesReport_17901328145780/Dashboard1";
-
+// Declare custom HTML element for TypeScript
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "tableau-viz": React.DetailedHTMLProps<
+      'tableau-viz': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement> & {
           id?: string;
           src?: string;
-          width?: string;
-          height?: string;
           toolbar?: string;
-          "hide-tabs"?: boolean;
+          device?: string;
         },
         HTMLElement
       >;
@@ -24,64 +20,38 @@ declare global {
 }
 
 export default function TableauDashboard() {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
+    // Check if script is already present
+    const existingScript = document.querySelector(
+      'script[src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"]'
+    );
 
-    const load = async () => {
-      if (!document.querySelector('script[data-tableau-embedding="v3"]')) {
-        const script = document.createElement("script");
-        script.type = "module";
-        script.src =
-          "https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js";
-        script.dataset.tableauEmbedding = "v3";
-        document.head.appendChild(script);
-
-        await new Promise<void>((resolve, reject) => {
-          script.addEventListener("load", () => resolve(), { once: true });
-          script.addEventListener("error", () => reject(new Error("Tableau API failed to load")), {
-            once: true,
-          });
-        });
-      }
-
-      if (cancelled || !hostRef.current) return;
-
-      hostRef.current.innerHTML = "";
-
-      const viz = document.createElement("tableau-viz");
-      viz.id = "tableauViz";
-      viz.setAttribute("src", TABLEAU_SRC);
-      viz.setAttribute("toolbar", "bottom");
-      viz.setAttribute("hide-tabs", "");
-
-      hostRef.current.appendChild(viz);
-      setReady(true);
-    };
-
-    load().catch((error) => {
-      console.error(error);
-      setReady(false);
-    });
-
-    return () => {
-      cancelled = true;
-    };
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js';
+      script.type = 'module';
+      script.onload = () => setIsScriptLoaded(true);
+      document.head.appendChild(script);
+    } else {
+      setIsScriptLoaded(true);
+    }
   }, []);
 
   return (
-    <div className="viz-shell">
-      <div
-        ref={hostRef}
-        className="tableau-frame"
-        aria-label="Sales Performance Tableau dashboard"
-      />
-      {!ready && (
-        <div style={{ padding: 24, color: "#64748b", fontSize: 13 }}>
-          Loading Tableau dashboard…
+    <div className="w-full h-[650px] relative rounded-lg overflow-hidden bg-gray-50 border border-gray-200">
+      {!isScriptLoaded ? (
+        <div className="flex items-center justify-center h-full text-gray-500 font-medium">
+          Loading Analytics Dashboard...
         </div>
+      ) : (
+        <tableau-viz
+          id="tableauViz"
+          src="https://public.tableau.com/views/SalesReport_17901328145780/Dashboard1"
+          toolbar="bottom"
+          style={{ width: '100%', height: '100%' }}
+        />
       )}
     </div>
   );
