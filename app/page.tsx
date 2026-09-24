@@ -1,5 +1,6 @@
-//import TableauDashboard from "@/components/TableauDashboard";
-//import AIChat from "@/components/AIChat";
+{/* import TableauDashboard from "@/components/TableauDashboard";
+    import AIChat from "@/components/AIChat";
+*/}
 
 export default function Home() {
   return (
